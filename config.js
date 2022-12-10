@@ -1,6 +1,6 @@
 module.exports = {
-  mongoUrl: 'mongodb+srv://aashish:mongopass@sandbox.ragwh.mongodb.net/?retryWrites=true&w=majority',
+  mongoUrl: 'mongodb://mongo:27017/parrot',
   port: 8100,
   backboneURL: 'http://localhost:8000/api',
-  debug: true,
+  debug: false,
 };
