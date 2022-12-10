@@ -1,4 +1,5 @@
-const { authenticateUser } = require("./user");
+const UserService = require('./user');
+const MessageService = require('./message');
 
 class Connection {
   constructor(io, socket) {
@@ -15,12 +16,17 @@ class Connection {
     });
   }
 
-  handleMessage(newMessage) {
+  async handleMessage(receivedMessage) {
     const message = {
-      ...newMessage,
+      ...receivedMessage,
       createdBy: this.socket.user._id
     };
-    this.io.to(message.chordId).emit('message', message);
+    const savedMessage = await MessageService.saveNewMessage(message);
+    const broadcastMessage = {
+      ...savedMessage,
+      tempId: receivedMessage.tempId
+    }
+    this.io.to(message.chordId).emit('message', broadcastMessage);
   }
 }
 
@@ -31,7 +37,7 @@ function chat(io) {
       if (!socket.handshake?.auth?.token) {
         throw new Error('Invalid auth token!');
       }
-      const user = await authenticateUser(socket.handshake.auth.token);
+      const user = await UserService.authenticateUser(socket.handshake.auth.token);
       if (!user._id) {
         throw new Error('Unauthorized!');
       }
