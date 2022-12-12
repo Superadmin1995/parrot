@@ -1,16 +1,10 @@
-const _ = require('lodash');
+const BaseService = require('./base');
 const MessageModel = require('../models/message');
 
-
-module.exports = {
-  async saveNewMessage(receivedMessage) {
-    const validatedMessage = _.pick(receivedMessage, [
-      'description',
-      'chordId',
-      'createdBy'
-    ]);
-    const message = new MessageModel(validatedMessage);
-    await message.save();
-    return message.toObject();
+class MessageService extends BaseService {
+  constructor () {
+    super(MessageModel);
   }
 }
+
+module.exports = new MessageService();

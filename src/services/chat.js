@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const UserService = require('./user');
 const MessageService = require('./message');
 
@@ -9,24 +10,25 @@ class Connection {
     socket.on('joinChord', ({ chordId }) => {
       logger.debug({ socketEvent: "joinChord", chordId });
       socket.join(chordId);
-      socket.on('message', (message) => this.handleMessage(message));
-      socket.on('connect_error', (err) => {
-        logger.error(`connect_error due to ${err.message}`);
-      });
+    });
+    socket.on('message', (message) => { this.handleMessage(message) });
+    socket.on('connect_error', (err) => {
+      logger.error(`connect_error due to ${err.message}`);
     });
   }
 
   async handleMessage(receivedMessage) {
-    const message = {
-      ...receivedMessage,
-      createdBy: this.socket.user._id
-    };
-    const savedMessage = await MessageService.saveNewMessage(message);
+    const validatedMessage = _.pick(receivedMessage, [
+      'description',
+      'chordId',
+    ]);
+    validatedMessage.createdBy = this.socket.user._id;
+    const savedMessage = await MessageService.post(validatedMessage);
     const broadcastMessage = {
       ...savedMessage,
       tempId: receivedMessage.tempId
-    }
-    this.io.to(message.chordId).emit('message', broadcastMessage);
+    };
+    this.io.to(broadcastMessage.chordId.toString()).emit('message', broadcastMessage);
   }
 }
 
