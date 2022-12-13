@@ -20,6 +20,51 @@ paths:
               schema:
                 type: string
                 example: pong
+  /api/chords:
+    get:
+      tags:
+        - Chords
+      summary: Get Chords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Chords
+      summary: Create Chord
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Real Madrid Fans
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+
+  /api/chords/{id}:
+    get:
+      tags:
+        - Chords
+      summary: Get Chord by Id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Chord Id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  
   /api/messages:
     get:
       tags:
