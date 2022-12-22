@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const UserService = require('./user');
+const AuthService = require('./auth');
 const MessageService = require('./message');
 
 class Connection {
@@ -39,7 +39,7 @@ function chat(io) {
       if (!socket.handshake?.auth?.token) {
         throw new Error('Invalid auth token!');
       }
-      const user = await UserService.authenticateUser(socket.handshake.auth.token);
+      const user = await AuthService.authenticateUserToken(socket.handshake.auth.token);
       if (!user._id) {
         throw new Error('Unauthorized!');
       }
